@@ -1,11 +1,19 @@
-import './App.css'
-import Auth from './components/Auth'
+import React, { useEffect } from 'react'; // useEffect를 import 합니다.
+import useAuthStore from './store/authStore';
+import Auth from './components/Auth';
+import Dashboard from './components/Dashboard';
 
-function App() {
+const App = () => {
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+
+  useEffect(() => {}, [isAuthenticated]);
 
   return (
-<><Auth /></>
-  )
-}
+    <div>
+      {isAuthenticated ? <Dashboard /> : <Auth />}
+    </div>
+  );
+};
 
-export default App
+export default App;
+
