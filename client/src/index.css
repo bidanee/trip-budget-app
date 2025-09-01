@@ -1,0 +1,21 @@
+/* --- 폰트 설정 --- */
+@font-face {
+  font-family: 'Gaegu';
+  src: url('./assets/fonts/Gaegu-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+}
+
+/* --- 기본 스타일 리셋 및 전역 폰트 적용 --- */
+body {
+  margin: 0;
+  font-family: 'Noto Sans KR', sans-serif; 
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: #f4f7fa;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
