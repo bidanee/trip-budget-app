@@ -1,13 +1,14 @@
 import axios from 'axios';
+import useAuthStore from '../store/authStore';
 
 // 백엔드 API의 기본 URL
 const API = axios.create({baseURL: 'http://localhost:3001'});
 
 // 인터셉터 설정
 API.interceptors.request.use((req) => {
-  if(localStorage.getItem('profile')){
-    //사용자 정보 확인, 있으면 토큰 가져와서 요청 헤더에 추가
-    req.headers.Authorization = `Bearer ${JSON.parse(localStorage.getItem('profile')).token}`;
+  const token = useAuthStore.getState().token;
+  if (token) {
+    req.headers.Authorization = `Bearer ${token}`;
   }
 
   return req;

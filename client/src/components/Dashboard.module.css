@@ -1,0 +1,218 @@
+.dashboardContainer {
+  max-width: 800px;
+  margin: 2rem auto;
+  padding: 2rem;
+  background-color: #fff;
+  border-radius: 1rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+}
+
+/* 헤더 */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 1rem;
+  margin-bottom: 2rem;
+}
+
+.header h1 {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0;
+  font-size: 1.8rem;
+  color: #ff8c94;
+}
+
+.logoutButton {
+  background: none;
+  border: 1px solid #ddd;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  font-family: 'Gaegu', cursive;
+  font-size: 1rem;
+}
+
+.logoutButton:hover {
+  background-color: #f9f9f9;
+}
+
+/* 섹션 공통 스타일 */
+.formSection, .listSection {
+  margin-bottom: 2.5rem;
+}
+
+.formSection h2, .listSection h2 {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+  border-bottom: 1px solid #f0f0f0;
+  padding-bottom: 0.5rem;
+}
+
+/* 예산 추가 폼 */
+.addForm {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.addForm input, .addForm select {
+  padding: 0.75rem;
+  border: 1px solid #ddd;
+  border-radius: 0.5rem;
+  font-family: 'Gaegu', cursive;
+  font-size: 1rem;
+}
+
+.addForm input[type="text"] { flex-grow: 2; }
+.addForm input[type="number"] { flex-grow: 1; }
+.addForm select { flex-grow: 0.5; }
+
+.addForm button {
+  padding: 0.75rem 1.25rem;
+  border: none;
+  border-radius: 0.5rem;
+  background-color: #ff8c94;
+  color: white;
+  font-size: 1rem;
+  font-family: 'Gaegu', cursive;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.addForm button:disabled {
+  background-color: #ccc;
+}
+
+/* 예산 목록 */
+.budgetList {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+}
+
+.budgetItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.25rem;
+  background-color: #fdfdff;
+  border: 1px solid #f0f0f0;
+  border-radius: 0.75rem;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.03);
+  transition: box-shadow 0.2s
+}
+
+.budgetItem:hover {
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+}
+
+.itemActions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.itemActions button {
+  background: none;
+  border: none;
+  color: #aaa;
+  cursor: pointer;
+  padding: 0.5rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.itemActions button:hover {
+  background-color: #f0f0f0;
+  color: #333;
+}
+
+.budgetItemContent h3 {
+  margin: 0 0 0.25rem 0;
+}
+
+.budgetItemContent p {
+  margin: 0;
+  color: #555;
+}
+
+/* 로딩/에러 피드백 */
+.feedbackContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  color: #777;
+}
+
+.spinner {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* 삭제 버튼 */
+.deleteButton {
+  background: none;
+  border: none;
+  color: #aaa;
+  cursor: pointer;
+  padding: 0.5rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.deleteButton:hover {
+  background-color: #ffebee;
+  color: #e53935;
+}
+
+/* 수정 */
+.editForm {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.editForm input {
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 0.5rem;
+  font-family: 'Gaegu', cursive;
+  font-size: 1rem;
+}
+.editForm input[type="text"] { flex-grow: 2; }
+.editForm input[type="number"] { flex-grow: 1; }
+
+.editActions {
+  display: flex;
+  gap: 0.25rem;
+}
+
+.editActions button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.5rem;
+  border-radius: 50%;
+  display: flex;
+}
+.editActions button:first-child:hover { background-color: #e8f5e9; color: #4caf50; } /* Save */
+.editActions button:last-child:hover { background-color: #ffebee; color: #e53935; } /* Cancel */
+
+
