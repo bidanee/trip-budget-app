@@ -23,5 +23,6 @@ export const fetchBudgets = () => API.get('/api/budgets');
 export const createBudget = (newBudget) => API.post('/api/budgets', newBudget);
 export const updateBudget = (id, updatedBudget) => API.put(`/api/budgets/${id}`, updatedBudget);
 export const deleteBudget = (id) => API.delete(`/api/budgets/${id}`);
+export const fetchBudgetById = (id) => API.get(`/api/budgets/${id}`);
 
 export default API;

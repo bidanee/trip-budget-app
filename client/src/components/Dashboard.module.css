@@ -216,3 +216,8 @@
 .editActions button:last-child:hover { background-color: #ffebee; color: #e53935; } /* Cancel */
 
 
+.budgetItemLink {
+  text-decoration: none;
+  color: inherit; 
+  display: block; 
+}
