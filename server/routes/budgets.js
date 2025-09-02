@@ -63,4 +63,18 @@ router.delete('/:id', auth, async(req, res) => {
   }
 });
 
+// --- 단일 예산 조회 API ---
+router.get('/:id', auth, async (req, res) => {
+  try{
+    const budget = await Budget.findOne({_id:req.params.id, user: req.userId});
+    if (!budget) {
+      return res.status(404).json({message:'예산 계획을 찾을 수 없습니다.'});
+    }
+    res.status(200).json(budget);
+  }catch(error) {
+    console.error('단일 예산 조회 오류입니다. : ', error);
+    res.status(500).json({message:'서버에 문제가 발생했습니다.'})
+  }
+})
+
 export default router;
