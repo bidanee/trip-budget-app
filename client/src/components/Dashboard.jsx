@@ -1,7 +1,8 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react';
+import {Link} from 'react-router-dom';
 import useAuthStore from '../store/authStore';
 import useBudgetStore from '../store/budgetStore'
-import { PiggyBank, PlusCircle, Loader,TriangleAlert, Trash2, Edit, Save, XCircle } from 'lucide-react'
+import { PiggyBank, PlusCircle, Loader,TriangleAlert, Trash2, Edit, Save, XCircle } from 'lucide-react';
 import styles from './Dashboard.module.css';
 
 
@@ -49,7 +50,10 @@ const Dashboard = () => {
     setNewBudgetData({title: '', totalBudget: '', currency: 'KRW'});
   };
 
-  const handleEditClick = (budget) =>{
+  const handleEditClick = (e, budget) =>{
+    e.preventDefault();
+    // 이벤트 버블링 방지
+    e.stopPropagation();
     setEditingBudgetId(budget._id);
     setEditingData({title:budget.title, totalBudget:budget.totalBudget, currency:budget.currency});
   };
@@ -58,6 +62,7 @@ const Dashboard = () => {
     const { name, value } = e.target;
     setEditingData((prev) => ({ ...prev, [name]: value }));
   }
+  
 
   const handleUpdateBudget = async(id) => {
     if(!editingData.title || !editingData.totalBudget) {
@@ -67,6 +72,12 @@ const Dashboard = () => {
     await updateBudget(id, editingData);
     setEditingBudgetId(null);
   } 
+
+  const handleDeleteBudget = (e, id) => {
+    e.preventDefault();
+    e.stopPropagation();
+    deleteBudget(id)
+  }
 
   const renderBudgetList = () => {
     // 로딩중
@@ -95,37 +106,39 @@ const Dashboard = () => {
     return(
       <div className={styles.budgetList}>
         {budgets.map((budget) => (
-          <div key={budget._id} className={styles.budgetItem}>
-            {editingBudgetId === budget._id ? (
-              <div className={styles.editForm}>
-                <input type='text' name='title' value={editingData.title} onChange={handleEditChange} />
-                <input type='number' name='totalBudget' value={editingData.totalBudget} onChange={handleEditChange} />
-                <select name='currency' value={editingData.currency} onChange={handleEditChange}>
-                  <option value='KRW'>🇰🇷 KRW</option>
-                  <option value='JPY'>🇯🇵 JPY</option>
-                  <option value='USD'>🇺🇸 USD</option>
-                  <option value='EUR'>🇪🇺 EUR</option>
-                </select>
-                <div className={styles.editActions}>
-                  <button onClick={() => handleUpdateBudget(budget._id)}><Save size={18}/></button>
-                  <button onClick={() => setEditingBudgetId(null)}><XCircle size={18}/></button>
+          <Link key={budget._id} to={`/budget/${budget._id}`} className={styles.budgetItemLink}>
+            <div className={styles.budgetItem}>
+              {editingBudgetId === budget._id ? (
+                <div className={styles.editForm} onClick={(e)=> {e.preventDefault(); e.stopPropagation()}}>
+                  <input type='text' name='title' value={editingData.title} onChange={handleEditChange} />
+                  <input type='number' name='totalBudget' value={editingData.totalBudget} onChange={handleEditChange} />
+                  <select name='currency' value={editingData.currency} onChange={handleEditChange}>
+                    <option value='KRW'>🇰🇷 KRW</option>
+                    <option value='JPY'>🇯🇵 JPY</option>
+                    <option value='USD'>🇺🇸 USD</option>
+                    <option value='EUR'>🇪🇺 EUR</option>
+                  </select>
+                  <div className={styles.editActions}>
+                    <button onClick={() => handleUpdateBudget(budget._id)}><Save size={18}/></button>
+                    <button onClick={() => setEditingBudgetId(null)}><XCircle size={18}/></button>
+                  </div>
                 </div>
-              </div>
-            ):(
-              <>
-                <div className={styles.budgetItemContent}>
-                  <h3>{budget.title}</h3>
-                  <p>
-                    총 예산: {Number(budget.totalBudget).toLocaleString()} {budget.currency}
-                  </p>
-                </div>
-                <div className={styles.itemActions}>
-                  <button onClick={() => handleEditClick(budget)}><Edit size={18}/></button>
-                  <button onClick={() => deleteBudget(budget._id)}><Trash2 size={18}/></button>
-                </div>
-              </>
-            )}
-          </div>
+              ):(
+                <>
+                  <div className={styles.budgetItemContent}>
+                    <h3>{budget.title}</h3>
+                    <p>
+                      총 예산: {Number(budget.totalBudget).toLocaleString()} {budget.currency}
+                    </p>
+                  </div>
+                  <div className={styles.itemActions}>
+                    <button onClick={(e) => handleEditClick(e,budget)}><Edit size={18}/></button>
+                    <button onClick={(e) => handleDeleteBudget(e,budget._id) }><Trash2 size={18}/></button>
+                  </div>
+                </>
+              )}
+            </div>
+          </Link>
         ))}
       </div>
     )
