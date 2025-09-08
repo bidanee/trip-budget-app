@@ -1,0 +1,125 @@
+.detailContainer {
+  max-width: 800px;
+  margin: 2rem auto;
+  padding: 2rem;
+  background-color: #fff;
+  border-radius: 1rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+}
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 1.5rem;
+  margin-bottom: 2rem;
+}
+.header h1 {
+  margin: 0 0 0.5rem 0;
+  font-size: 2rem;
+}
+.totalBudget {
+  margin: 0;
+  font-size: 1.2rem;
+  color: #555;
+  font-weight: 500;
+}
+.backLink {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  background: none;
+  border: 1px solid #ddd;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  font-family: 'Gaegu', cursive;
+  font-size: 1rem;
+  text-decoration: none;
+  color: #333;
+}
+.backLink:hover {
+  background-color: #f9f9f9;
+}
+.mainContent h2 {
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+/* 지출 내역 추가 폼  */
+.expenseFormSection {
+  margin-bottom: 2.5rem;
+}
+.expenseForm {
+  display:flex;
+  gap: 0.5 rem;
+}
+.expenseForm input {
+  padding: 0.75rem;
+  border: 1px solid #ddd;
+  border-radius: 0.5rem;
+  font-family: 'Gaegu', cursive;
+  font-size: 1rem;
+}
+.expenseForm input[type="text"] { flex-grow: 1;}
+.expenseForm button {
+  padding: 0.75rem 1.25rem;
+  border: none;
+  border-radius: 0.5rem;
+  background-color: #ff8c94;
+  color:white;
+  font-size: 1rem;
+  font-family: 'Gaegu', cursive;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+/* 지출 내역 목록 */
+.expenseList {
+  display: grid;
+  gap: 0.5rem;
+}
+.expenseItem {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.75rem 1rem;
+  background-color: #fdfdff;
+  border-radius: 0.5rem;
+  border: 1px solid #f0f0f0;
+}
+.expenseItem span:first-child {
+  font-weight: 500;
+}
+.expenseItem button {
+  background: none;
+  border: none;
+  color: #aaa;
+  cursor: pointer;
+  padding: 0.5rem;
+  border-radius: 50%;
+  display: flex;
+}
+.expenseItem button:hover {
+  background-color: #ffebee;
+  color: #e53935;
+}
+
+/* 로딩/에러  */
+.feedbackContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  color: #777;
+  height: 50vh;
+}
+.spinner {
+  animation: spin 1s linear infinite;
+}
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
