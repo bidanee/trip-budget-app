@@ -2,7 +2,7 @@ import axios from 'axios';
 import useAuthStore from '../store/authStore';
 
 // 백엔드 API의 기본 URL
-const API = axios.create({baseURL: 'http://localhost:3001'});
+const API = axios.create({baseURL: 'https://trip-budget-app-server.onrender.com'});
 
 // 인터셉터 설정
 API.interceptors.request.use((req) => {

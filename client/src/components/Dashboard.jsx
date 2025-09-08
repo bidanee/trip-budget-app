@@ -4,6 +4,7 @@ import useAuthStore from '../store/authStore';
 import useBudgetStore from '../store/budgetStore'
 import { PiggyBank, PlusCircle, Loader,TriangleAlert, Trash2, Edit, Save, XCircle } from 'lucide-react';
 import styles from './Dashboard.module.css';
+import {toast} from 'react-hot-toast'
 
 
 
@@ -43,8 +44,8 @@ const Dashboard = () => {
   const handleAddBudget = async(e) => {
     e.preventDefault();
     if(!newBudgetData.title || !newBudgetData.totalBudget) {
-      alert('제목과 총 예산을 모두 입력해주세요');
-      return;
+      return toast.error('제목과 총 예산을 모두 입력해주세요');
+      
     }
     await addBudget(newBudgetData);
     setNewBudgetData({title: '', totalBudget: '', currency: 'KRW'});
@@ -66,8 +67,7 @@ const Dashboard = () => {
 
   const handleUpdateBudget = async(id) => {
     if(!editingData.title || !editingData.totalBudget) {
-      alert('제목과 총 예산을 모두 입력해주세요');
-      return;
+      return toast.error('제목과 총 예산을 모두 입력해주세요');
     }
     await updateBudget(id, editingData);
     setEditingBudgetId(null);
