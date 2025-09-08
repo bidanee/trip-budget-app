@@ -1,5 +1,6 @@
 import { create } from "zustand"
 import { createBudget, fetchBudgets, deleteBudget, updateBudget, fetchBudgetById, addExpense, deleteExpense } from "../api"
+import toast from "react-hot-toast"
 
 
 const useBudgetStore = create((set,get) => ({
@@ -16,7 +17,7 @@ const useBudgetStore = create((set,get) => ({
       set({budgets: data, isLoading:false});
     } catch(error) {
       set({error, isLoading:false});
-      console.error('예산 목록 로딩 실패', error);
+      toast.error('예산 목록을 불러오는 데 실패했어요...');
     }
   },
 
@@ -29,9 +30,10 @@ const useBudgetStore = create((set,get) => ({
         budgets: [...state.budgets, newData],
         isLoading: false
       }));
+      toast.success('새로운 예산이 추가되었어요!')
     } catch(error) {
       set({error, isLoading:false});
-      console.error('예산 목록 생성 실패 ', error);
+      toast.error('예산을 추가하는 데 실패했어요.');
     }
   },
 
@@ -45,9 +47,10 @@ const useBudgetStore = create((set,get) => ({
         budgets: state.budgets.filter((budget) => budget._id !== id),
         isLoading:false
       }));
+      toast.success('예산이 삭제되었어요.');
     } catch (error) {
       set({error, isLoading:false})
-      console.error('예산 계획 삭제 실패', error);
+      toast.error('예산 삭제에 실패했어요.');
     }
   },
 
@@ -60,9 +63,10 @@ const useBudgetStore = create((set,get) => ({
         budgets: state.budgets.map((budget) => budget._id === id ? updatedBudget : budget),
         isLoading:false
       }));
+      toast.success('예산 정보가 수정되었어요!');
     } catch (error) {
       set({error, isLoading: false});
-      console.error('예산 수정 실패', error);
+      toast.error('예산 수정에 실패했어요.');
       // 에러 발생해도 원래 목록 다시 불러옴 -> UI 안정적으로 유지 위해
       get().getBudgets();
     }
@@ -84,9 +88,10 @@ const useBudgetStore = create((set,get) => ({
     try{
       const { data: updatedBudget} = await addExpense(budgetId, newExpenseData);
       set({selectedBudget: updatedBudget});
+      toast.success('지출 내역이 추가되었어요.');
     } catch (error) {
       console.error('지출 항목 추가 실패', error);
-      // todo : 에러 알림 모달? 알람?
+      toast.error('지출 내역 추가에 실패했어요.');
     }
   },
 
@@ -94,9 +99,10 @@ const useBudgetStore = create((set,get) => ({
     try {
       const {data: updatedBudget} = await deleteExpense(budgetId, expenseId);
       set ({selectedBudget: updatedBudget});
+      toast.success('지출 내역이 삭제되었어요.');
     } catch (error) {
       console.error('지출 항목 삭제 실패', error);
-      // todo : 에러 알림
+      toast.error('지출 내역 삭제에 실패했어요.');
     }
   }
 

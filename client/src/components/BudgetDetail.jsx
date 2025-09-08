@@ -3,6 +3,7 @@ import useBudgetStore from "../store/budgetStore";
 import { useEffect, useState } from "react";
 import {Loader, TriangleAlert, ArrowLeft, Trash2, PlusCircle} from 'lucide-react';
 import styles from './BudgetDetail.module.css';
+import {toast} from "react-hot-toast"
 
 const BudgetDetail = () => {
   const { id } = useParams();
@@ -30,8 +31,8 @@ const BudgetDetail = () => {
   const handleAddExpense = async(e) => {
     e.preventDefault();
     if(!newExpense.description || !newExpense.amount){
-      alert('항목과 금액을 모두 입력해주세요.');
-      return;
+      return toast.error('항목과 금액을 모두 입력해주세요.');
+      
     }
     await addExpense(id, newExpense);
     setNewExpense({
