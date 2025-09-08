@@ -2,47 +2,16 @@ import React, {useState} from 'react';
 import styles from './Auth.module.css';
 import {signIn, signUp} from '../api';
 import useAuthStore from '../store/authStore'
+import { toast } from 'react-hot-toast'
 
 const Auth = () => {
   const [isLogin, setIsLogin] = useState(false);
   const [formData, setFormData] = useState({
     username: '', email: '', password: '', confirmPassword: ''
   });
+  const [loading, setLoading] = useState(false);
   
   const login = useAuthStore((state) => state.login)
-
-  const handleSubmit = async(e) => {
-    e.preventDefault();
-    
-    try{
-      if (isLogin) {
-        const response = await signIn({
-          email: formData.email,
-          password: formData.password
-        });
-        const {token} = response.data;
-        console.log('로그인 성공', token);
-        login(token);
-      } else {
-        if (formData.password !== formData.confirmPassword) {
-          alert('비밀번호가 일치하지 않습니다. 다시 확인해주세요.');
-          return;
-        }
-
-        await signUp(formData);
-        const response = await signIn({
-          email: formData.email,
-          password: formData.password
-        });
-        const {token} = response.data;
-        console.log('회원가입 및 자동 로그인 성공!', token);
-        login(token);
-      }
-    } catch(error) {
-      console.error('인증 실패', error);
-      alert(error.response?.data?.message || '오류가 발생했습니다.')
-    }
-  };
 
   const handleChange = (e) => {
     setFormData({
@@ -50,9 +19,46 @@ const Auth = () => {
     });
   };
 
-  const switchMode = () => {
-    setIsLogin((prevIsLogin) => !prevIsLogin);
-  }
+  const handleSubmit = async(e) => {
+    e.preventDefault();
+    setLoading(true);
+
+    try{
+      if (isLogin) {
+        const response = await signIn({
+          email: formData.email,
+          password: formData.password
+        });
+        const {token} = response.data;
+        login(token);
+        toast.success('로그인 성공! 환영합니다. :)')
+      } else {
+        if (formData.password !== formData.confirmPassword) {
+          toast.error('비밀번호가 일치하지 않습니다. 다시 확인해주세요.');
+          setLoading(false);
+          return;
+        }
+
+        await signUp({
+          username: formData.username,
+          email: formData.email,
+          password: formData.password
+        });
+
+        const response = await signIn({
+          email: formData.email,
+          password: formData.password
+        });
+        const {token} = response.data;
+        login(token);
+        toast.success('회원가입 성공!! 회원이되신걸 축하드립니다!', token);
+      }
+    } catch(error) {
+      console.error('인증 실패', error);
+      toast.error(error.response?.data?.message || '오류가 발생했습니다.')
+      setLoading(false);
+    }
+  };
 
   return (
     <div className={styles.authWrapper}>
