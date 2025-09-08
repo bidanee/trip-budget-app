@@ -77,4 +77,43 @@ router.get('/:id', auth, async (req, res) => {
   }
 })
 
+// --- 지출 항목 추가 API ---
+router.post('/:id/expenses', auth, async (req, res) => {
+  const {description, amount} = req.body;
+  const budgetId = req.params.id;
+
+  try{
+    const budget = await Budget.findById(budgetId);
+    if (!budget) {
+      return res.status(404).json({message: '예산 계획을 찾을 수 없습니다.'});
+    }
+
+    budget.expenses.unshift({description, amount});
+
+    const updatedBudget = await budget.save();
+    res.status(200).json(updatedBudget);
+  }catch (error){
+    res.status(500).json({ message: '서버에 오류가 발생했습니다.'});
+  }
+});
+
+// --- 지출 항목 삭제 API ---
+router.delete('/:ad/expenses/:expenseId', auth , async (req, res) => {
+  const {id: budgetId, expenseId} = req.params;
+
+  try{
+    const budget = await Budget.findById(budgetId);
+    if (!budget) {
+      return res.status(404).json({message: '예산 계획을 찾을 수 없습니다.'});
+    }
+
+    budget.expenses = budget.expenses.filter(expense => expense._id.toString() !== expenseId);
+
+    const updatedBudget = await budget.save();
+    res.status(200).json(updatedBudget);
+  } catch (error) {
+    res.status(500).json({message: '서버에 문제가 발생했습니다.'});
+  }
+})
+
 export default router;
