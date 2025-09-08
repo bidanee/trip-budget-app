@@ -1,9 +1,10 @@
 import { create } from "zustand"
-import { createBudget, fetchBudgets, deleteBudget, updateBudget } from "../api"
+import { createBudget, fetchBudgets, deleteBudget, updateBudget, fetchBudgetById, addExpense, deleteExpense } from "../api"
 
 
 const useBudgetStore = create((set,get) => ({
   budgets:[],
+  selectedBudget: null,
   isLoading: false,
   error: null,
 
@@ -65,7 +66,40 @@ const useBudgetStore = create((set,get) => ({
       // 에러 발생해도 원래 목록 다시 불러옴 -> UI 안정적으로 유지 위해
       get().getBudgets();
     }
+  },
+
+  // 단일 예산 조회
+  getBudgetById: async (id) => {
+    set({isLoading: true, error: null});
+    try {
+      const { data } = await fetchBudgetById(id);
+      set({ selectedBudget: data, isLoading: false });
+    } catch(error) {
+      set({error, isLoading: false});
+      console.error('예산 조회 실패', error);
+    }
+  },
+
+  addExpense: async (budgetId, newExpenseData) => {
+    try{
+      const { data: updatedBudget} = await addExpense(budgetId, newExpenseData);
+      set({selectedBudget: updatedBudget});
+    } catch (error) {
+      console.error('지출 항목 추가 실패', error);
+      // todo : 에러 알림 모달? 알람?
+    }
+  },
+
+  deleteExpense: async (budgetId, expenseId) => {
+    try {
+      const {data: updatedBudget} = await deleteExpense(budgetId, expenseId);
+      set ({selectedBudget: updatedBudget});
+    } catch (error) {
+      console.error('지출 항목 삭제 실패', error);
+      // todo : 에러 알림
+    }
   }
+
 }));
 
 export default useBudgetStore;

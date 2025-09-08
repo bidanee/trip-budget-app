@@ -16,7 +16,7 @@ const App = () => {
         <>
         {/* 로그인 했을 때 보여줄 페이지 */}
         <Route path="/" element={<Dashboard />} />
-        <Route path="/budgets/:id" element={<BudgetDetail />} />
+        <Route path="/budget/:id" element={<BudgetDetail />} />
         </>
       ) : (
         <>

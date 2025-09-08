@@ -1,17 +1,123 @@
 import { useParams, Link } from "react-router-dom";
+import useBudgetStore from "../store/budgetStore";
+import { useEffect, useState } from "react";
+import {Loader, TriangleAlert, ArrowLeft, Trash2, PlusCircle} from 'lucide-react';
+import styles from './BudgetDetail.module.css';
 
 const BudgetDetail = () => {
-  const { id } = useParams()
+  const { id } = useParams();
+  const selectedBudget = useBudgetStore((state) => state.selectedBudget);
+  const isLoading = useBudgetStore((state) => state.isLoading);
+  const error = useBudgetStore((state) => state.error);
+  const getBudgetById = useBudgetStore((state) => state.getBudgetById);
+  const addExpense = useBudgetStore((state) => state.addExpense);
+  const deleteExpense = useBudgetStore((state) => state.deleteExpense);
+  
+  const [newExpense, setNewExpense] = useState({
+    description:'',
+    amount:'',
+  });
+
+  useEffect(() => {
+    if (id) getBudgetById(id);
+  }, [id, getBudgetById]);
+
+  const handleInputChange = (e) => {
+    const { name, value} = e.target;
+    setNewExpense((prev)=> ({...prev, [name]:value}));
+  };
+
+  const handleAddExpense = async(e) => {
+    e.preventDefault();
+    if(!newExpense.description || !newExpense.amount){
+      alert('항목과 금액을 모두 입력해주세요.');
+      return;
+    }
+    await addExpense(id, newExpense);
+    setNewExpense({
+      description: '',
+      amount: '',
+    })
+  };
+
+  const handleDeleteExpense = async(expenseId) => {
+    if (window.confirm('정말로 이 항목을 삭제하시겠어요??')) {
+      deleteExpense(id, expenseId)
+    }
+  }
+
+  if (isLoading) {
+    return (
+      <div className={styles.feedbackContainer}>
+        <Loader className={styles.spinner}/>
+        <p>예산 정보를 불러오는 중입니다...</p>
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className={styles.feedbackContainer}>
+        <TriangleAlert color="#e74c3c"/>
+        <p>오류가 발생했어요: {error.message}</p>
+      </div>
+    );
+  }
+
+  if (!selectedBudget) {
+    return (
+      <div className={styles.feedbackContainer}>
+        <TriangleAlert color="#e74c3c"/>
+        <p>해당 예산 정보를 찾을 수 없습니다.</p>
+      </div>      
+    )
+  }
+
+  const totalExpenses = selectedBudget.expenses.reduce((sum, expense) => sum + expense.amount, 0);
+  const remainingBudget = selectedBudget.totalBudget - totalExpenses;
 
   return (
-    <div>
-      <h2>예산 상세 페이지</h2>
-      <p>현재 보고 있는 예산 계획의 ID : {id}</p>
-      {/* todo : 지출 내역 추가 및 관리 기능 */}
-      <br/>
-      <Link to="/">대시보드 가기</Link>
-    </div>
-  )
-}
+    <div className={styles.detailContainer}>
+      <header className={styles.header}>
+        <div>
+          <h1>{selectedBudget.title}</h1>
+          <p>총 예산: <span>{Number(selectedBudget.totalBudget).toLocaleString()}</span></p>
+          <p>총 지출: <span>{totalExpenses.toLocaleString()}</span></p>
+          <p className={styles.remaining}>남은 예산: <span>{remainingBudget.toLocaleString()} {selectedBudget.currency}</span></p>
+        </div>
+        <Link to="/" className={styles.backLink}>
+          <ArrowLeft size={16}/> 대시보드로 돌아가기
+        </Link>
+      </header>
 
-export default BudgetDetail
+      <main className={styles.mainContent}>
+        <section className={styles.expenseFormSection}>
+          <h2><PlusCircle size={20}/> 지출 내역 추가</h2>
+          <form onSubmit={handleAddExpense} className={styles.expenseForm}>
+            <input type="text" name="description" placeholder="지출 내역" value={newExpense.description} onChange={handleInputChange} />
+            <input type="number" name="amount" placeholder="금액" value={newExpense.amount} onChange={handleInputChange}/>
+            <button type="submit">추가</button>
+          </form>
+        </section>
+        <section>
+          <h2>지출 내역 목록</h2>
+          {selectedBudget.expenses.length > 0 ? (
+            <div className={styles.expenseList}>
+              {selectedBudget.expenses.map((expense) => (
+                <div key={expense._id} className={styles.expenseItem}>
+                  <span>{expense.description}</span>
+                  <span>{Number(expense.amount).toLocaleString()} {selectedBudget.currency}</span>
+                  <button onClick={() => handleDeleteExpense(expense._id)}><Trash2 size={16}/></button>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p>아직 등록된 지출 내역이 없습니다.</p>
+          )}
+        </section>
+      </main>
+    </div>
+  );
+};
+
+export default BudgetDetail;
