@@ -33,7 +33,7 @@ const budgetSchema = new mongoose.Schema({
     type:String,
     required:true,
   },
-  expense: [expensesSchema],
+  expenses: [expensesSchema],
 }, {timestamps: true});
 
 const Budget = mongoose.model('Budget', budgetSchema);
