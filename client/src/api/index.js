@@ -25,4 +25,8 @@ export const updateBudget = (id, updatedBudget) => API.put(`/api/budgets/${id}`,
 export const deleteBudget = (id) => API.delete(`/api/budgets/${id}`);
 export const fetchBudgetById = (id) => API.get(`/api/budgets/${id}`);
 
+// expense API 요청
+export const addExpense = (budgetId, newExpense) => API.post(`/api/budgets/${budgetId}/expenses`, newExpense);
+export const deleteExpense = (budgetId, expenseId) => API.delete(`/api/budgets/${budgetId}/expenses/${expenseId}`);
+
 export default API;
