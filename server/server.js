@@ -5,8 +5,10 @@ import 'dotenv/config';
 import userRoutes from './routes/users.js';
 import budgetRoutes from './routes/budgets.js';
 
-// express 앱 생성
+dotenv.config();
+
 const app = express();
+
 const PORT = process.env.PORT || 3001;
 
 // middleware 설정
