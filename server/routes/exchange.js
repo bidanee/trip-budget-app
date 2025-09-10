@@ -16,7 +16,7 @@ router.get('/rates', async(req, res) => {
     const day = String(today.getDate()).padStart(2, '0');
     const searchDate = `${year}${month}${day}`;
 
-    const url = `https://www.koreaxim.go.kr/site/program/financial/exchangeJSON?authkey=${apiKey}&searchdate=${searchDate}&data=AP01`;
+    const url = `https://oapi.koreaexim.go.kr/site/program/financial/exchangeJSON?authkey=${apiKey}&searchdate=${searchDate}&data=AP01`;
     
     const response = await axios.get(url);
     const ratesData = response.data;
