@@ -4,6 +4,7 @@ import cors from 'cors';
 import 'dotenv/config';
 import userRoutes from './routes/users.js';
 import budgetRoutes from './routes/budgets.js';
+import exchangeRoutes from './routes/exchange.js';
 
 const app = express();
 
@@ -22,6 +23,7 @@ mongoose.connect(process.env.MONGODB_URI)
 //  --- user라우트, budgets라우트 ---
 app.use('/api/users', userRoutes);
 app.use('/api/budgets', budgetRoutes);
+app.use('/api/exchange', exchangeRoutes);
 
 // 기본 라우트 설정 (서버 생존 확인용)
 app.get('/', (req, res) => {
