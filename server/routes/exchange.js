@@ -3,7 +3,7 @@ import axios from 'axios'
 
 const router = express.Router();
 
-router.get('/', async(req, res) => {
+router.get('/rates', async(req, res) => {
   try{
     const apiKey = process.env.EXCHANGE_API_KEY;
     if(!apiKey) {
