@@ -32,4 +32,7 @@ export const deleteExpense = (budgetId, expenseId) => API.delete(`/api/budgets/$
 // 환율 API 요청
 export const fetchExchangeRate = () => API.get('/api/exchange/rates');
 
+// AI API 요청
+export const askAI = (prompt) => API.post('/api/ai/chat', {prompt})
+
 export default API;
