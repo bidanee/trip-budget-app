@@ -2,9 +2,10 @@ import React, { useEffect, useState } from 'react';
 import {Link} from 'react-router-dom';
 import useAuthStore from '../store/authStore';
 import useBudgetStore from '../store/budgetStore'
-import { PiggyBank, PlusCircle, Loader,TriangleAlert, Trash2, Edit, Save, XCircle } from 'lucide-react';
+import { PiggyBank, PlusCircle, Loader,TriangleAlert, Trash2, Edit, Save, XCircle, Bot } from 'lucide-react';
 import styles from './Dashboard.module.css';
 import {toast} from 'react-hot-toast'
+import ChatModal from './ChatModal'
 
 
 
@@ -25,6 +26,8 @@ const Dashboard = () => {
     totalBudget:'',
     currency:''
   })
+  // 챗봇 모달
+  const [isChatOpen, setIsChatOpen] = useState(false);
 
   useEffect(() => {
     if(token) {
@@ -119,7 +122,7 @@ const Dashboard = () => {
                     <option value='EUR'>🇪🇺 EUR</option>
                   </select>
                   <div className={styles.editActions}>
-                    <button onClick={() => handleUpdateBudget(budget._id)}><Save size={18}/></button>
+                    <button onClick={() => handleUpdateBudget(budget._id)}><Save size={18} /></button>
                     <button onClick={() => setEditingBudgetId(null)}><XCircle size={18}/></button>
                   </div>
                 </div>
@@ -182,6 +185,10 @@ const Dashboard = () => {
           {renderBudgetList()}
         </section>
       </main>
+      <button className={styles.aiChatButton} onClick={() => setIsChatOpen(true)}>
+        <Bot size={28}/>
+      </button>
+      {isChatOpen && <ChatModal close={() => setIsChatOpen(false)}/>}
     </div>
   )
 }
