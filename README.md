@@ -5,7 +5,6 @@
 ---
 
 ## 1. ✨ 최종 성과물
-나만의 여행 예산을 계획하고 관리하는 **풀스택 웹 애플리케이션**을 성공적으로 개발하고 배포했습니다.
 
 - **프론트엔드 (Vercel 배포):** https://trip-budget-app.vercel.app/
 - **백엔드 (Render 배포):** https://trip-budget-app-server.onrender.com  
@@ -14,10 +13,10 @@
 
 ## 2. 🛠️ 적용된 기술 스택 (Tech Stack)
 
-**Frontend:** React (Vite), Zustand, React Router, Axios, CSS Modules, lucide-react, react-hot-toast  
-**Backend:** Node.js, Express, MongoDB, Mongoose, JWT, dotenv, bcryptjs  
-**Deployment:** Vercel (Frontend), Render (Backend)  
-**Version Control:** Git, GitHub  
+**Frontend**: React (Vite), Zustand, React Router, Axios, CSS Modules, Recharts, lucide-react, react-hot-toast  
+**Backend**: Node.js, Express, MongoDB, Mongoose, JWT, @google/genai (Gemini 2.5)  
+**Deployment**: Vercel (Frontend), Render (Backend)  
+**Version Control**: Git, GitHub  
 
 ---
 
@@ -26,14 +25,26 @@
 ### 🔐 사용자 인증 (Authentication)
 - JWT 기반의 안전한 회원가입 및 로그인/로그아웃 기능 구현  
 
-### 📔 예산 계획 CRUD (Create, Read, Update, Delete)
-- 여행 예산 계획 생성, 조회, 수정, 삭제 가능  
+### 📔 예산 및 지출 CRUD (Create, Read, Update, Delete)
+- 여행 예산 계획과 그 안의 상세 지출 내역을 생성, 조회, 수정, 삭제 가능
+
+### 📊 지출 내역 차트 시각화
+- **Recharts**를 활용하여 카테고리별 지출 내역을 **원형 차트**로 시각화  
+- 사용자가 자신의 지출 패턴을 직관적으로 확인 가능
+
+### 💹 실시간 환율 적용 및 자동 환산
+- 모든 금액을 **원화(KRW)** 기준으로 자동 환산하여 사용자 편의성을 높임 
 
 ### 💸 상세 지출 관리 및 예산 추적 (Expense Tracking)
 - 항목 추가/삭제: ‘숙소’, ‘식비’ 등 지출 항목 자유롭게 관리 가능  
-- 실시간 잔액 계산: 총 예산에서 지출 합계를 자동 계산해 남은 예산 표시  
+- 실시간 잔액 계산: 총 예산에서 지출 합계를 자동 계산해 남은 예산 표시
 
-### 🎨 세련된 사용자 경험 (UX)
+### 🤖 AI 기반 여행 플래닝 (RAG)
+- 최신 **RAG (Retrieval-Augmented Generation)** 기술 도입  
+- Google Gemini 2.5 Flash 모델 + Google Search 연동  
+- 최신 웹 정보를 실시간 검색 후 **신뢰도 높은 답변**을 생성하는 AI 챗봇 구현
+
+### 🎨 사용자 경험 향상 (UX)
 - 로딩/에러 상태 시각화  
 - 사용자 알림을 부드러운 토스트 메시지로 통일  
 
@@ -41,33 +52,51 @@
 
 ## 4. 🚀 다음 단계 (Future Improvements)
 
-앞으로 계획
+현재 프로젝트는 **MVP(최소 기능 제품)** 단계입니다. 앞으로의 발전 방향은 다음과 같음
 
-### 🚀 최신 RAG(Retrieval-Augmented Generation) 기술 도입
-- 🤖 **AI 여행 Q&A 챗봇**  
-  - 사용자가 *“도쿄에서 저렴하고 맛있는 현지 맛집 알려줘”* 라고 물으면, 최신 여행 블로그/리뷰 데이터를 **실시간 검색(Retrieval)** → **답변 생성(Generation)**  
-  - 예: *“시부야의 A라멘, 신주쿠의 B초밥이 가성비 좋다는 평가가 많습니다.”*  
+### 📅 여행 일정 관리 UI 도입
 
-- 🤖 **AI 예산 추천**  
-  - 여행지와 여행 스타일(예: *가성비*, *럭셔리*)에 맞춰 예상 총 경비와 항목별 추천 예산 자동 생성  
+- 상세 페이지 내에 [💰 예산 관리] 탭과 [🗺️ 여행 일정] 탭을 만들어, 사용자가 예산과 AI가 생성한 추천 일정을 한 화면에서 쉽게 오갈 수 있도록 기능 추가 및 개선
 
-- 🤖 **AI 지출 분석 및 제안**  
-  - 지출 패턴 분석 후 절약 팁 제공  
-  - 예: *“식비 비중이 높은 편입니다. 현지 시장을 활용해보세요.”*  
+### 🤖 AI 챗봇 기능 고도화
+- **계획과 예산 연동**: 챗봇이 추천하는 여행 일정을 바탕으로 예상 비용을 자동 계산해 예산 계획에 반영  
+- **실시간 상담 및 조정**: 여행 중 챗봇과 대화하며 예산에 맞는 일정 재조정, 돌발 상황 시 대체 방안 제안  
+- **개인화 추천**: 사용자의 지출 패턴과 취향을 분석하여 맞춤형 맛집, 쇼핑, 액티비티 추천  
+- **데이터 기반 피드백**: 여행 후 실제 지출 vs. AI 추천 예산 비교 분석 → 다음 여행 가이드 제공  
 
-- 🤖 **AI 일정 생성**  
-  - 관심사 기반 여행 코스 + 예상 비용을 자동으로 제안하는 맞춤형 플랜 제공  
+---
 
-### 💹 실시간 환율 적용 및 자동 환산
-- 외부 환율 API 연동 (예: ExchangeRate-API)  
-- 현지 통화 ↔ 원화(KRW) 자동 환산 기능  
+### 🤝 공유 및 협업 기능
+- 가족, 친구 등 **여행 동행자 초대 기능**  
+- 예산 및 지출 내역을 **공유·공동 관리**할 수 있는 기능 제공  
 
-### 📊 지출 내역 차트 시각화
-- 카테고리별 지출을 원형 차트 등으로 시각화  
-- Chart.js 또는 Recharts 활용  
+---
 
-### 코드 품질 향상
-- ✅ **테스트 코드 작성**: Jest + React Testing Library 적용  
-- 🇹🇸 **TypeScript 도입**: 타입 안정성을 통한 버그 감소 및 유지보수성 향상
+### 👤 프로필 페이지
+- 닉네임, 비밀번호 변경 등 **개인 정보 관리 페이지** 제공  
+
+---
+
+### 🔔 알림 및 경고 시스템
+- 설정한 예산의 **70%, 90% 초과 시 푸시 알림**  
+- 여행기간동안 매일 **지출 내역 입력 알림**  
+
+---
+
+### ✈️ 오프라인 모드 지원
+- **네트워크 미연결 상태**에서도 지출 내역 입력 가능  
+- 연결 복구 시 **자동 동기화**  
+
+---
+
+### ✅ 코드 품질 향상
+- **테스트 코드 작성**: Jest + React Testing Library → 기능 안정성 & 유지보수성 강화  
+- **TypeScript 도입**: 타입을 추가해 런타임 에러 사전 방지, 코드 안정성 및 가독성 향상  
+
+---
+
+### 📸 영수증 사진 및 OCR 인식
+- 사용자가 **영수증 사진을 업로드**하면  
+- **OCR(광학 문자 인식)** 기술을 활용해 지출 내역과 금액을 자동 인식 및 기록  
 
 ---
