@@ -1,5 +1,5 @@
 import { create } from "zustand"
-import { createBudget, fetchBudgets, deleteBudget, updateBudget, fetchBudgetById, addExpense, deleteExpense } from "../api"
+import { createBudget, fetchBudgets, deleteBudget as apiDeleteBudget, updateBudget as apiUpdateBudget, fetchBudgetById, addExpense as apiAddExpense, deleteExpense as apiDeleteExpense, updateExpense as apiUpdateExpense } from "../api"
 import toast from "react-hot-toast"
 
 
@@ -42,7 +42,7 @@ const useBudgetStore = create((set,get) => ({
     if(!window.confirm('정말로 이 예산 계획을 삭제하시겠어요??')) return;
     set({isLoading: true, error: null});
     try{
-      await deleteBudget(id);
+      await apiDeleteBudget(id);
       set((state) => ({
         budgets: state.budgets.filter((budget) => budget._id !== id),
         isLoading:false
@@ -58,7 +58,7 @@ const useBudgetStore = create((set,get) => ({
   updateBudget: async(id, updatedData) => {
     set({isLoading:true, error: null});
     try{
-      const {data: updatedBudget} = await updateBudget(id, updatedData);
+      const {data: updatedBudget} = await apiUpdateBudget(id, updatedData);
       set((state) => ({
         budgets: state.budgets.map((budget) => budget._id === id ? updatedBudget : budget),
         isLoading:false
@@ -86,7 +86,7 @@ const useBudgetStore = create((set,get) => ({
 
   addExpense: async (budgetId, newExpenseData) => {
     try{
-      const { data: updatedBudget} = await addExpense(budgetId, newExpenseData);
+      const { data: updatedBudget} = await apiAddExpense(budgetId, newExpenseData);
       set({selectedBudget: updatedBudget});
       toast.success('지출 내역이 추가되었어요.');
     } catch (error) {
@@ -97,14 +97,25 @@ const useBudgetStore = create((set,get) => ({
 
   deleteExpense: async (budgetId, expenseId) => {
     try {
-      const {data: updatedBudget} = await deleteExpense(budgetId, expenseId);
+      const {data: updatedBudget} = await apiDeleteExpense(budgetId, expenseId);
       set ({selectedBudget: updatedBudget});
       toast.success('지출 내역이 삭제되었어요.');
     } catch (error) {
       console.error('지출 항목 삭제 실패', error);
       toast.error('지출 내역 삭제에 실패했어요.');
     }
-  }
+  },
+
+  updateExpense: async (budgetId, expenseId, updatedExpense) => {
+    try {
+      const { data: updatedBudget } = await apiUpdateExpense(budgetId, expenseId, updatedExpense);
+      set({selectedBudget: updatedBudget});
+      toast.success('지출 내역이 수정되었어요.');
+    } catch(error){
+      console.error('지출 항목 수정 실패', error);
+      toast.error('지출 내역 수정에 실패했어요.');
+    }
+  } 
 
 }));
 
