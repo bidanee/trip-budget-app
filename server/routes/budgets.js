@@ -102,6 +102,34 @@ router.post('/:id/expenses', auth, async (req, res) => {
   }
 });
 
+// --- 지출 항목 수정 API ---
+router.put('/:id/expenses/:expenseId', auth, async (req, res) => {
+  const {category, description, amount}  = req.body;
+  const { id: budgetId, expenseId } = req.params;
+
+  try {
+    const budget = await Budget.findById(budgetId);
+    if (!budget) {
+      return res.status(404).json({message: '예산 계획을 찾을 수 없습니다.'});
+    }
+    
+    const expense = budget.expenses.id(expenseId);
+    if(!expense) {
+      return res.status(404).json({message: '지출 항목을 찾을 수 없습니다.'});
+    }
+
+    expense.category = category || expense.category;
+    expense.description = description || expense.description;
+    expense.amount = amount || expense.amount;
+
+    const updatedBudget = await budget.save();
+    res.status(202).json(updatedBudget);
+  } catch (error) {
+    console.error('지출 항목 수정 API 오류', error);
+    res.status(500).json({ message: '서버에 오류가 발생했습니다.'});
+  }
+});
+
 // --- 지출 항목 삭제 API ---
 router.delete('/:id/expenses/:expenseId', auth , async (req, res) => {
   const {id: budgetId, expenseId} = req.params;
