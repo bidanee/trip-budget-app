@@ -79,8 +79,12 @@ router.get('/:id', auth, async (req, res) => {
 
 // --- 지출 항목 추가 API ---
 router.post('/:id/expenses', auth, async (req, res) => {
-  const {description, amount} = req.body;
+  const {category, description, amount} = req.body;
   const budgetId = req.params.id;
+
+  if(!category || !description || !amount) {
+    return res.status(400).json({message: '카테고리, 내역, 금액을 모두 입력해 주세요.'});
+  }
 
   try{
     const budget = await Budget.findById(budgetId);
@@ -88,11 +92,40 @@ router.post('/:id/expenses', auth, async (req, res) => {
       return res.status(404).json({message: '예산 계획을 찾을 수 없습니다.'});
     }
 
-    budget.expenses.unshift({description, amount});
+    budget.expenses.unshift({category, description, amount});
 
     const updatedBudget = await budget.save();
     res.status(200).json(updatedBudget);
   }catch (error){
+    console.error('지출 항목 추가 API 오류', error);
+    res.status(500).json({ message: '서버에 오류가 발생했습니다.'});
+  }
+});
+
+// --- 지출 항목 수정 API ---
+router.put('/:id/expenses/:expenseId', auth, async (req, res) => {
+  const {category, description, amount}  = req.body;
+  const { id: budgetId, expenseId } = req.params;
+
+  try {
+    const budget = await Budget.findById(budgetId);
+    if (!budget) {
+      return res.status(404).json({message: '예산 계획을 찾을 수 없습니다.'});
+    }
+    
+    const expense = budget.expenses.id(expenseId);
+    if(!expense) {
+      return res.status(404).json({message: '지출 항목을 찾을 수 없습니다.'});
+    }
+
+    expense.category = category || expense.category;
+    expense.description = description || expense.description;
+    expense.amount = amount || expense.amount;
+
+    const updatedBudget = await budget.save();
+    res.status(202).json(updatedBudget);
+  } catch (error) {
+    console.error('지출 항목 수정 API 오류', error);
     res.status(500).json({ message: '서버에 오류가 발생했습니다.'});
   }
 });
