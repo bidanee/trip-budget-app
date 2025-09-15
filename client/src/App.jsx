@@ -5,11 +5,15 @@ import Dashboard from './components/Dashboard';
 import { Route, Routes } from 'react-router-dom';
 import {Toaster} from 'react-hot-toast';
 import BudgetDetail from './components/BudgetDetail';
+import useExchangeStore from './store/exchangeStore'
 
 const App = () => {
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
-
+  const getRates = useExchangeStore((state) => state.getRates);
   useEffect(() => {}, [isAuthenticated]);
+  useEffect(() => {
+    getRates();
+  },[getRates]);
 
   return (
     <>

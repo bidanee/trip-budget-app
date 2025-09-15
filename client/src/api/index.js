@@ -29,4 +29,10 @@ export const fetchBudgetById = (id) => API.get(`/api/budgets/${id}`);
 export const addExpense = (budgetId, newExpense) => API.post(`/api/budgets/${budgetId}/expenses`, newExpense);
 export const deleteExpense = (budgetId, expenseId) => API.delete(`/api/budgets/${budgetId}/expenses/${expenseId}`);
 
+// 환율 API 요청
+export const fetchExchangeRate = () => API.get('/api/exchange/rates');
+
+// AI API 요청
+export const askAI = (prompt) => API.post('/api/ai/chat', {prompt})
+
 export default API;

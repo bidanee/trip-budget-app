@@ -98,7 +98,7 @@ router.post('/:id/expenses', auth, async (req, res) => {
 });
 
 // --- 지출 항목 삭제 API ---
-router.delete('/:ad/expenses/:expenseId', auth , async (req, res) => {
+router.delete('/:id/expenses/:expenseId', auth , async (req, res) => {
   const {id: budgetId, expenseId} = req.params;
 
   try{
