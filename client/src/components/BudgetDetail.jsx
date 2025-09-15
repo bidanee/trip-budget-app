@@ -6,6 +6,7 @@ import styles from './BudgetDetail.module.css';
 import {toast} from "react-hot-toast"
 import useExchangeStore from "../store/exchangeStore"
 import { formatCurrency } from "../utils/formatCurrency"
+import ExpenseChart from "./ExpenseChart"
 
 const BudgetDetail = () => {
   const { id } = useParams();
@@ -143,6 +144,7 @@ const BudgetDetail = () => {
 
 
       <main className={styles.mainContent}>
+        <ExpenseChart expenses={selectedBudget.expenses} currency={selectedBudget.currency} rates={rates} />
         <section className={styles.expenseFormSection}>
           <h2><PlusCircle size={20}/> 지출 내역 추가</h2>
           <form onSubmit={handleAddExpense} className={styles.expenseForm}>
