@@ -4,15 +4,20 @@ import { useEffect, useState } from "react";
 import {Loader, TriangleAlert, ArrowLeft, Trash2, PlusCircle} from 'lucide-react';
 import styles from './BudgetDetail.module.css';
 import {toast} from "react-hot-toast"
+import useExchangeStore from "../store/exchangeStore"
+import { formatCurrency } from "../utils/formatCurrency"
 
 const BudgetDetail = () => {
   const { id } = useParams();
-  const selectedBudget = useBudgetStore((state) => state.selectedBudget);
-  const isLoading = useBudgetStore((state) => state.isLoading);
-  const error = useBudgetStore((state) => state.error);
-  const getBudgetById = useBudgetStore((state) => state.getBudgetById);
-  const addExpense = useBudgetStore((state) => state.addExpense);
-  const deleteExpense = useBudgetStore((state) => state.deleteExpense);
+  const { 
+    selectedBudget, 
+    isLoading, 
+    error, 
+    getBudgetById, 
+    addExpense, 
+    deleteExpense 
+  } = useBudgetStore((state) => state);
+  const rates = useExchangeStore((state) => state.rates);
   
   const [newExpense, setNewExpense] = useState({
     description:'',
@@ -30,9 +35,8 @@ const BudgetDetail = () => {
 
   const handleAddExpense = async(e) => {
     e.preventDefault();
-    if(!newExpense.description || !newExpense.amount){
+    if(!newExpense.description.trim() || !newExpense.amount.trim()){
       return toast.error('항목과 금액을 모두 입력해주세요.');
-      
     }
     await addExpense(id, newExpense);
     setNewExpense({
@@ -76,20 +80,31 @@ const BudgetDetail = () => {
 
   const totalExpenses = selectedBudget.expenses.reduce((sum, expense) => sum + expense.amount, 0);
   const remainingBudget = selectedBudget.totalBudget - totalExpenses;
+  const spentPercentage = selectedBudget.totalBudget > 0 ? (totalExpenses / selectedBudget.totalBudget) * 100 : 0;
 
   return (
     <div className={styles.detailContainer}>
       <header className={styles.header}>
         <div>
           <h1>{selectedBudget.title}</h1>
-          <p>총 예산: <span>{Number(selectedBudget.totalBudget).toLocaleString()}</span></p>
-          <p>총 지출: <span>{totalExpenses.toLocaleString()}</span></p>
-          <p className={styles.remaining}>남은 예산: <span>{remainingBudget.toLocaleString()} {selectedBudget.currency}</span></p>
+          <div className={styles.budgetSummary}>
+            <p>총 예산: <span>{formatCurrency(selectedBudget.totalBudget, selectedBudget.currency, rates)}</span></p>
+            <p>총 지출: <span>{formatCurrency(totalExpenses, selectedBudget.currency, rates)}</span></p>
+            <p className={styles.remaining}>남은 예산: <span>{formatCurrency(remainingBudget, selectedBudget.currency, rates)} </span></p>
+          </div>
         </div>
         <Link to="/" className={styles.backLink}>
           <ArrowLeft size={16}/> 대시보드로 돌아가기
         </Link>
       </header>
+
+      <div className={styles.progressBarContainer}>
+        <div 
+          className={styles.progressBarFill}
+          style={{ width: `${spentPercentage}%`}}
+        />
+      </div>
+
 
       <main className={styles.mainContent}>
         <section className={styles.expenseFormSection}>
@@ -107,7 +122,7 @@ const BudgetDetail = () => {
               {selectedBudget.expenses.map((expense) => (
                 <div key={expense._id} className={styles.expenseItem}>
                   <span>{expense.description}</span>
-                  <span>{Number(expense.amount).toLocaleString()} {selectedBudget.currency}</span>
+                  <span className={styles.expenseAmount}>{formatCurrency(expense.amount, selectedBudget.currency, rates)}</span>
                   <button onClick={() => handleDeleteExpense(expense._id)}><Trash2 size={16}/></button>
                 </div>
               ))}
@@ -122,3 +137,4 @@ const BudgetDetail = () => {
 };
 
 export default BudgetDetail;
+
