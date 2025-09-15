@@ -2,6 +2,12 @@ import mongoose from 'mongoose';
 
 // 지출 항목의 스키마
 const expensesSchema = new mongoose.Schema({
+  category:{
+    type: String,
+    required: true,
+    enum: ['식비','교통','숙소','쇼핑','관광','기타'],
+    default:'기타',
+  },
   description:{
     type: String,
     required:true
@@ -9,7 +15,11 @@ const expensesSchema = new mongoose.Schema({
   amount:{
     type: Number,
     required: true
-  }
+  },
+  createdAt: {
+    type: Date,
+    default: Date.now
+  },
 })
 
 // 예산 계획 스키마
