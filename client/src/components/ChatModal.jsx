@@ -1,6 +1,8 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {Bot, X, Send, Loader} from 'lucide-react';
 import styles from './ChatModal.module.css';
+import {askAI} from "../api";
+import ReactMarkdown from "react-markdown";
 
 
 const ChatModal = ({close}) => {
@@ -9,6 +11,13 @@ const ChatModal = ({close}) => {
   ]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const messageListRef = useRef(null);
+
+  useEffect(() => {
+    if (messageListRef.current) {
+      messageListRef.current.scrollTop = messageListRef.current.scrollHeight;
+    }
+  }, [messages, isLoading]);
 
   const handleSend = async (e) => {
     e.preventDefault();
@@ -43,7 +52,9 @@ const ChatModal = ({close}) => {
         <div className={styles.messageList}>
           {messages.map((msg, index) =>(
             <div key={index} className={`${styles.message} ${styles[msg.from]}`}>
-              <div className={styles.bubble}>{msg.text}</div>
+              <div className={styles.bubble}>
+                {msg.from === 'ai' ? <ReactMarkdown>{msg.text}</ReactMarkdown> : msg.text}
+              </div>
             </div>
           ))}
           {isLoading && (

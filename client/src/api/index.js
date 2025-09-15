@@ -27,6 +27,7 @@ export const fetchBudgetById = (id) => API.get(`/api/budgets/${id}`);
 
 // expense API 요청
 export const addExpense = (budgetId, newExpense) => API.post(`/api/budgets/${budgetId}/expenses`, newExpense);
+export const updateExpense = (budgetId, expenseId, updatedExpense) => API.put(`/api/budgets/${budgetId}/expenses/${expenseId}`, updatedExpense);
 export const deleteExpense = (budgetId, expenseId) => API.delete(`/api/budgets/${budgetId}/expenses/${expenseId}`);
 
 // 환율 API 요청

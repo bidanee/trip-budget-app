@@ -96,6 +96,7 @@
   display: flex;
   gap: 0.5rem;
 }
+.expenseForm select,
 .expenseForm input {
   padding: 0.75rem;
   border: 1px solid #ddd;
@@ -103,6 +104,15 @@
   font-family: 'Gaegu', cursive;
   font-size: 1rem;
   flex-grow: 1;
+}
+.categorySelect {
+  flex-basis: 120px;
+}
+.expenseForm input[type = "text"] {
+  flex-grow:1;
+}
+.expenseForm input[type = "number"] {
+  flex-basis: 100px;
 }
 .expenseForm button {
   padding: 0.75rem 1.25rem;
@@ -126,11 +136,11 @@
   gap: 0.5rem;
 }
 .expenseItem {
-  display: grid;
-  grid-template-columns: 1fr auto min-content; 
+  display: flex;
+  justify-content: space-between;
   align-items: center;
   gap: 1rem;
-  padding: 1rem 1.25rem;
+  padding: 0.75rem 1rem;
   background-color: #fdfdff;
   border-radius: 0.5rem;
   border: 1px solid #f0f0f0;
@@ -139,12 +149,32 @@
 .expenseItem:hover {
   background-color: #f9f9ff;
 }
-.expenseItem span:first-child {
+.expenseDetails {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+.expenseCategory{
+  font-size: 0.8rem;
+  color: #888;
+  font-weight: 500;
+  background-color: #f0f0f8;
+  padding: 0.1rem 0.4rem;
+  border-radius: 0.25rem;
+  align-self: flex-start;
+  margin-bottom:0.25rem;
+}
+.expenseDescription {
   font-weight: 500;
 }
 .expenseAmount {
   text-align: right;
   font-feature-settings: 'tnum'; 
+  white-space: nowrap;
+}
+.expenseAction {
+  display: flex ;
+  gap: 0.25rem;
 }
 .expenseItem button {
   background: none;
@@ -156,11 +186,50 @@
   display: flex;
   transition: background-color 0.2s, color 0.2s;
 }
-.expenseItem button:hover {
+.expenseActions button:first-child:hover { 
+  background-color: #e0e0ff;
+  color: #5D5FEF; 
+} 
+.expenseActions button:last-child:hover {
   background-color: #ffebee;
-  color: #e53935;
+  color: #e53935; 
+  }
+  
+.expenseEditForm {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  gap: 0.5rem;
 }
-
+.expenseEditForm select,
+.expenseEditForm input {
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 0.5rem;
+  font-family: 'Gaegu', cursive;
+  font-size: 1rem;
+  background-color: white;
+}
+.expenseEditForm select { flex-basis: 100px; }
+.expenseEditForm input[type="text"] { flex-grow: 1; }
+.expenseEditForm input[type="number"] { flex-basis: 80px; }
+.expenseEditForm button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.5rem;
+  border-radius: 50%;
+  display: flex;
+  transition: background-color 0.2s, color 0.2s;
+}
+.expenseEditForm button:nth-of-type(1):hover {
+  background-color: #e8f5e9; 
+  color: #4caf50; 
+  } 
+.expenseEditForm button:nth-of-type(2):hover {
+  background-color: #f0f0f0; 
+  color: #555; 
+}
 /* 피드백 로딩 */
 .feedbackContainer {
   display: flex;
