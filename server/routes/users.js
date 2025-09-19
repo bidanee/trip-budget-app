@@ -2,6 +2,8 @@ import express from 'express';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import User from '../models/User.js';
+import auth from '../middleware/auth.js';
+import { uploadAvatar } from '../middleware/upload.js'
 
 const router = express.Router();
 
@@ -14,7 +16,7 @@ router.post('/register', async (req, res) => {
     // 이메일 중복확인
     const existingUser = await User.findOne({email});
     if(existingUser){
-      return res.status(400).json({message: '이미 사용 중인 이메일입니다🥺'});
+      return res.status(400).json({message: '이미 사용 중인 이메일입니다'});
     }
 
     // 비밀번호 암호화
@@ -34,7 +36,7 @@ router.post('/register', async (req, res) => {
     res.status(201).json({message:'회원가입 성공! 🎉 환영합니다!'});
   } catch(error) {
     // 서버 에러가 발생하면 500에러
-    res.status(500).json({message:' 서버에 문제가 발생했어요 😭'})
+    res.status(500).json({message: error.message || ' 서버에 문제가 발생했어요 😭'})
   }
 });
 
@@ -63,9 +65,68 @@ router.post('/login', async (req, res) => {
     
     // 생성된 토큰 프론트에 전달
     res.status(200).json({token, username:user.username});
+
   } catch(error) {
     res.status(500).json({message:'서버에 문제가 발생했어요 😭'})
   }
+});
+
+
+// 현재 사용자 정보
+router.get('/me', auth, async(req, res) => {
+  const user = await User.findById(req.userId).select('username email avatarUrl').lean();
+  if(!user) return res.status(404).json({message:'사용자 정보를 찾을 수 없습니다.'});
+  res.json(user);
+});
+
+// 닉네임, 이미지 업데이트
+router.put('/profile', auth, uploadAvatar.single('avatar'), async(req, res) => {
+  try {
+    const {username} = req.body;
+    const update = {};
+
+    if (typeof username === 'string' && username.trim()){
+      update.username = username.trim();
+    }
+    if(req.file) {
+      update.avatarUrl = `/uploads/${req.file.filename}`;    
+    }
+
+    const user = await User.findByIdAndUpdate(req.userId, {$set: update}, {new: true}).select('username email avatarUrl').lean();
+
+    if (!user) {
+      return res.status(404).json('사용자를 찾을 수 없습니다.');
+    }
+    res.json({ message: '프로필이 업데이트 되었습니다.', user });
+  } catch(error) {
+    res.status(400).json({message: error.message || '프로필 업데이트 실패'});
+  }
+});
+
+// 비밀번호 변경
+router.put('/password', auth, async(req, res) => {
+  const { currentPassword, newPassword } = req.body;
+  if (!currentPassword || !newPassword)  {
+    return res.status(400).json({message:'현재 비밀번호와 새 비밀번호를 모두 입력해주세요.'});
+  }
+
+  const user = await User.findById(req.userId);
+  if (!user) {
+    return res.status(404).json({message:'사용자를 찾을 수 없습니다.'});
+  }
+  const ok = await bcrypt.compare(currentPassword, user.password);
+  if (!ok) {
+    return res.status(400).json({message:'비밀번호가 올바르지 않습니다.'});
+  }
+
+  if (newPassword.length < 8) {
+    return res.status(400).json({message:'비밀번호는 8자 이상이야 합니다.'});
+  }
+
+  user.password = await bcrypt.hash(newPassword, 12);
+  await user.save();
+  res.json({message:'비밀번호가 변경되었습니다.'})
 })
+
 
 export default router;

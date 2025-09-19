@@ -6,6 +6,7 @@ import userRoutes from './routes/users.js';
 import budgetRoutes from './routes/budgets.js';
 import exchangeRoutes from './routes/exchange.js';
 import aiRoutes from './routes/ai.js';
+import { UPLOAD_DIR } from './middleware/upload.js'
 
 const app = express();
 
@@ -26,6 +27,7 @@ app.use('/api/users', userRoutes);
 app.use('/api/budgets', budgetRoutes);
 app.use('/api/exchange', exchangeRoutes);
 app.use('/api/ai', aiRoutes)
+app.use('/uploads', express.static(UPLOAD_DIR))
 
 // 기본 라우트 설정 (서버 생존 확인용)
 app.get('/', (req, res) => {
