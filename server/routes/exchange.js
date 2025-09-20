@@ -1,53 +1,90 @@
-import express from 'express'
-import axios from 'axios'
+import express from 'express';
+import axios from 'axios';
 
 const router = express.Router();
 
-router.get('/rates', async(req, res) => {
-  try{
+// === Config ===
+const MAX_ATTEMPTS = 10;
+const CACHE_TTL_MS = 10 * 60 * 1000; 
+
+
+let cache = {
+  ts: 0,
+  usedDate: null,
+  data: null,
+};
+
+const yyyymmddKSTMinusDays = (days = 0) => {
+  const kst = new Date(Date.now() + 9 * 60 * 60 * 1000);
+  kst.setUTCDate(kst.getUTCDate() - days);
+  const y = kst.getUTCFullYear();
+  const m = String(kst.getUTCMonth() + 1).padStart(2, '0');
+  const d = String(kst.getUTCDate()).padStart(2, '0');
+  return `${y}${m}${d}`;
+};
+
+const fetchRatesForDate = async (apiKey, yyyymmdd) => {
+  const url = `https://oapi.koreaexim.go.kr/site/program/financial/exchangeJSON?authkey=${apiKey}&searchdate=${yyyymmdd}&data=AP01`;
+  const { data } = await axios.get(url, { timeout: 10_000 });
+  return Array.isArray(data) ? data : [];
+};
+
+router.get('/rates', async (req, res) => {
+  try {
     const apiKey = process.env.EXCHANGE_API_KEY;
-    if(!apiKey) {
-      return res.status(500).json({message: '환율정보 API KEY를 찾을 수 없습니다.'});
-    }
-    
-    const today = new Date();
-    const year = today.getFullYear();
-    const month = String(today.getMonth() + 1).padStart(2, '0');
-    const day = String(today.getDate()).padStart(2, '0');
-    const searchDate = `${year}${month}${day}`;
-
-    const url = `https://oapi.koreaexim.go.kr/site/program/financial/exchangeJSON?authkey=${apiKey}&searchdate=${searchDate}&data=AP01`;
-    
-    const response = await axios.get(url);
-    const ratesData = response.data;
-
-    if (!ratesData || ratesData.length === 0) {
-      // todo : 주말/공휴일인 경우 가장 최신 영업일 환율가져오는 로직 추가
-      return res.status(404).json({message: '해당 날짜의 환율정보를 찾을 수 없습니다. (주말/공휴일 확인)'});
+    if (!apiKey) {
+      return res.status(500).json({ message: '환율 API 키가 서버에 설정되지 않았습니다.' });
     }
 
-    // 기준 통화 : KRW
-    const conversion_rates = {
-      'KRW': 1,
+    const now = Date.now();
+    const force = req.query.force === '1';
+    if (!force && cache.data && now - cache.ts < CACHE_TTL_MS) {
+      res.set('X-Rate-Base-Date', cache.usedDate || '');
+      return res.json(cache.data);
     }
 
-    ratesData.forEach(rate => {
-      let currencyCode = rate.cur_unit;
-      let dealRate = parseFloat(rate.deal_bas_r.replace(/,/g,''));
+    let ratesData = [];
+    let usedDate = null;
 
-      //JPY(100) 같은 뒤에 뭐가 붙으면 나눠서 1엔당 환율로 계산
-      if (currencyCode.includes('(100)')) {
-        currencyCode = currencyCode.replace('(100)', '');
-        dealRate = dealRate / 100;
+    for (let i = 0; i < MAX_ATTEMPTS; i++) {
+      const searchDate = yyyymmddKSTMinusDays(i);
+      try {
+        const data = await fetchRatesForDate(apiKey, searchDate);
+        if (data.length > 0) {
+          ratesData = data;
+          usedDate = searchDate;
+          break;
+        }
+      } catch (err) {
+        console.warn(`[Exchange] fetch fail for ${searchDate}:`, err.message);
       }
+    }
 
-      conversion_rates[currencyCode] = dealRate;
-    });
+    if (ratesData.length === 0) {
+      return res.status(404).json({ message: '최근 환율 정보를 가져올 수 없습니다.' });
+    }
+
+    const conversion_rates = { KRW: 1 };
+    for (const rate of ratesData) {
+      if (!rate?.cur_unit || !rate?.deal_bas_r) continue;
+      let code = String(rate.cur_unit);
+      let deal = parseFloat(String(rate.deal_bas_r).replace(/,/g, ''));
+      if (Number.isNaN(deal)) continue;
+
+      if (code.includes('(100)')) {
+        code = code.replace('(100)', '');
+        deal = deal / 100;
+      }
+      conversion_rates[code] = deal;
+    }
     
-    res.json(conversion_rates);
-  } catch(error) {
-    console.error('환율 정보 조회 실패', error);
-    res.status(500).json({message: '환율 정보를 가져오는데 문제가 발생했습니다.'});
+    cache = { ts: now, usedDate, data: conversion_rates };
+
+    res.set('X-Rate-Base-Date', usedDate || '');
+    return res.json(conversion_rates);
+  } catch (error) {
+    console.error('[Exchange] Critical error:', error.message);
+    return res.status(500).json({ message: '환율 정보를 가져오는 데 실패했습니다.' });
   }
 });
 
